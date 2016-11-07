@@ -1,0 +1,191 @@
+<head>
+  <title>siteace</title>
+</head>
+
+<body>
+  {{>navbar}}
+
+  {{> register}}
+  {{> login}}
+</body>
+
+<template name="navbar">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+          Site Ace
+        </a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        {{#if currentUser}}
+          <li><a href="#" class="logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+        {{else}}
+          <li><a data-toggle="modal" data-target="#register-modal" href="#"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+          <li><a data-toggle="modal" data-target="#login-modal" href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        {{/if}}
+      </ul>
+    </div>
+  </nav>
+</template>
+
+<template name="main">
+  <div class="container">
+    {{> website_form}}
+    {{> website_list}}
+  </div>
+</template>
+
+<template name="search">
+  <div class="form-group">
+    <input type="text" class="form-control" id="search-input" placeholder="search something...">
+  </div>
+</template>
+
+<template name="website_form">
+  {{> search }}
+  <a class="btn btn-default js-toggle-website-form" href="#">
+      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+  </a>
+  <div id="website_form" class="hidden_div">
+    <form class="js-save-website-form">
+      <div class="form-group">
+        <label for="url">Site address</label>
+        <input type="text" class="form-control" id="url" placeholder="http://www.mysite.com">
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  </div>
+</template>
+
+<!-- template that displays several website items -->
+<template name="website_list">
+  <ol>
+  {{#each websites}}
+    {{>website_item}}
+  {{/each}}
+  </ol>
+</template>
+
+<!-- template that displays individual website entries -->
+<template name="website_item">
+<li>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="badge">{{vote}}</span>
+      <a href="{{url}}">{{title}}</a>
+    </div>
+    <div class="panel-body">
+      <p>
+        {{description}}
+      </p>
+      <a href="#" class="btn btn-default btn-sm js-upvote">
+        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+      </a>
+      <a href="#" class="btn btn-default btn-sm js-downvote">
+        <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+      </a>
+      <!-- you will be putting your up and down vote buttons in here! -->
+    </div>
+    <div class="panel-footer">
+      <a href="/detail/{{_id}}">Detail</a> | {{createdOn}}
+    </div>
+  </div>
+</li>
+</template>
+
+<template name="detail">
+  <div class="container">
+    <h3>{{title}}</h3>
+    
+    <p>Link: <a href="{{url}}">{{url}}</a></p>
+    <p>Description: {{description}}</p>
+    <p>Created on: {{createdOn}}</p>
+    <p>Vote: {{vote}}</p>
+
+    <button class="btn btn-default" data-toggle="modal" data-target="#comment-modal" href="#">Add a comment</button>
+
+    <h4>Comments</h4>
+    <ul class="list-group">
+      {{#each comments}}
+        <div class="panel panel-default">
+          <div class="panel-heading"><b>{{ this.createdBy }}</b> {{this.createdOn}}</div>
+          <div class="panel-body">
+              {{this.content}}
+          </div>
+        </div>
+      {{/each}}
+    </ul>
+  </div>
+
+  <div id="comment-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Add a comment</h4>
+        </div>
+        <div class="modal-body">
+          <form class="comment-form">
+            <div class="form-group">
+              <p>Comment : </p>
+              <textarea name="comment" class="form-control"></textarea>
+            </div>
+            <p><input class="btn btn-default" type="submit" value="Submit"></p>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<template name="register">
+  <div id="register-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Register</h4>
+        </div>
+        <div class="modal-body">
+          <form name="register-form" class="register-form">
+            <p>Email: <input type="email" name="register-email" class="form-control"></p>
+            <p>Password: <input type="password" name="register-password" class="form-control"></p>
+            <p><input class="btn btn-default" type="submit" value="Register"></p>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<template name="login">
+  <div id="login-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Login</h4>
+        </div>
+        <div class="modal-body">
+          <form name="login-form" class="login-form form-group">
+            <p>Email: <input type="email" name="login-email" class="form-control"></p>
+            <p>Password: <input type="password" name="login-password" class="form-control"></p>
+            <p><input class="btn btn-default" type="submit" value="Login"></p>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
